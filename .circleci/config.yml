@@ -1,0 +1,48 @@
+version: 2
+
+references:
+  js_deps_paths: &js_deps_paths
+  - node_modules/
+  build_cache_paths: &build_cache_paths
+  - public/
+  - .cache/
+  js_deps_cache_key: &js_deps_cache_key
+    js-deps-v{{.Environment.CACHE_VERSION}}-{{checksum "package-lock.json"}}
+  build_cache_key: &build_cache_key
+    build-cache-v{{.Environment.CACHE_VERSION}}-{{checksum "package-lock.json"}}
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build
+jobs:
+  build:
+    docker:
+    - image: circleci/node:12
+    steps:
+    - checkout
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+          - "*"
+    - restore_cache:
+        keys:
+        - *js_deps_cache_key
+    - run:
+        name: Conditional install
+        command: if [ ! -d node_modules ]; then npm ci; fi
+    - save_cache:
+        paths: *js_deps_paths
+        key: *js_deps_cache_key
+    - restore_cache:
+        keys:
+        - *build_cache_key
+    - run:
+        name: Build Dist
+        command: npm run build
+    - save_cache:
+        paths: *build_cache_paths
+        key: *build_cache_key
+    - run:
+        name: Upload docs to surge.sh
+        command: node .circleci/upload-preview.js public
