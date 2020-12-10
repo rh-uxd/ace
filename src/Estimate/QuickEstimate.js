@@ -5,11 +5,12 @@ export default ({ onViewEstimate }) => {
   const costs = [
     ['Cluster', '$10,000'],
     ['Data storage', '$10,000'],
-    ['Outgress', '$10,000']
+    ['Outgress', '$10,000'],
+    ['Total', '$30,000']
   ];
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-      <h2>
+    <div style={{ display: 'flex', marginTop: 'auto' }}>
+    {/*<h2>
         Quick Estimate
       </h2>
       <table>
@@ -21,8 +22,8 @@ export default ({ onViewEstimate }) => {
             </tr>
           ))}
         </tbody>
-      </table>
-      <Button onClick={onViewEstimate}>
+      </table>*/}
+      <Button style={{ width: '100%', height: '100px' }} onClick={onViewEstimate}>
         View estimate
       </Button>
     </div>
